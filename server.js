@@ -23,4 +23,29 @@ connectdb.connect((err) => {
         console.log("Connected!")
     }
 
-})
+});
+
+function Query(req, res, query, body, params){
+    let value;
+        if(body && params){
+            value = [body, params]
+        }else if(body && !params){
+            value = [body]
+        }else if(!body && params){
+            value = [params]
+        }
+
+        connectdb.query(query, value, (error, result) => {
+
+            if(error){
+                return res.json(error);
+            }
+            res.json(result);
+        })
+}
+
+app.get('/users', (req, res) => Query(req, res, 'SELECT * FROM users', false, false));
+app.get('/products', (req, res) => Query(req, res, 'SELECT * FROM products', false, false));
+
+app.get('/users/:id', (req, res) => Query(req, res, 'SELECT name FROM users WHERE id = ?', false, [req.params.id]))
+app.get('/products/:id', (req, res) => Query(req, res, 'SELECT name FROM products WHERE id = ?', false, [req.params.id]))
