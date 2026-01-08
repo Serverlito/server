@@ -25,6 +25,8 @@ connectdb.connect((err) => {
 
 });
 
+app.use(express.json());
+
 function Query(req, res, query, body, params){
     let value;
         if(body && params){
@@ -49,3 +51,6 @@ app.get('/products', (req, res) => Query(req, res, 'SELECT * FROM products', fal
 
 app.get('/users/:id', (req, res) => Query(req, res, 'SELECT name FROM users WHERE id = ?', false, [req.params.id]))
 app.get('/products/:id', (req, res) => Query(req, res, 'SELECT name FROM products WHERE id = ?', false, [req.params.id]))
+
+app.post('/users', (req, res) => Query(req, res, 'INSERT INTO users (name) VALUES (?)', [req.body.name], false));
+app.post('/products', (req, res) => Query(req, res, 'INSERT INTO products (name) VALUES (?)', [req.body.name], false));
